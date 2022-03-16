@@ -49,7 +49,7 @@ export const signin = async (req, res) => {
   };
 
   export const businesssignup = async (req, res) => {
-    const { email, password, businessName, businessAddress, businessDescription, businessPhoneNumber} = req.body;
+    const { email, password, businessName, businessAddress, businessCity, businessState, businessDescription, businessPhoneNumber} = req.body;
     try {
       const knownUser = await UserModal.findOne({ email });
   
@@ -57,7 +57,7 @@ export const signin = async (req, res) => {
   
       const hashedPassword = await bcrypt.hash(password, 12);
   
-      const result = await UserModal.create({ email, password: hashedPassword, name: businessName, businessName: businessName, businessAddress: businessAddress, businessDescription: businessDescription, businessPhoneNumber: businessPhoneNumber, isAdmin: false});
+      const result = await UserModal.create({ email, password: hashedPassword, name: businessName, businessName: businessName, businessAddress: businessAddress, businessCity: businessCity, businessState: businessState, businessDescription: businessDescription, businessPhoneNumber: businessPhoneNumber, isAdmin: false});
   
       const token = jwt.sign( { email: result.email, id: result._id }, secret.toString(), { expiresIn: "1h" } );
   

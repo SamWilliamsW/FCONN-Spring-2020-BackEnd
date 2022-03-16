@@ -9,6 +9,8 @@ const userSchema = mongoose.Schema({
 
     businessName: { type: String, required: false},
     businessAddress: { type: String, required: false},
+    businessCity: { type: String, required: false},
+    businessState: { type: String, required: false},
     businessDescription: { type: String, required: false},
     businessPhoneNumber: { type: String, required: false},
 });
