@@ -1,18 +1,19 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Restaurants from '../models/restaurants.js'
+import restaurants from '../models/restaurants.js'
 
 const router = express.Router();
 
-//Not being used yet.
+//Not being used yet. 
 
 export const getRestaurants = async (req, res) => {    
     try {
 
-        const total = await Restaurants.countDocuments({});
-        const restaurants = await Restaurants.find().sort({ _id: -1 });
+        const total = await restaurants.countDocuments({});
+        const restaurants = await restaurants.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
 
-        res.json({ data: restaurants});
+        res.json({ data: restaurants, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT)});
+        // res.json({ data: restaurants});
     } catch (error) {    
         res.status(404).json({ message: error.message });
     }
@@ -21,11 +22,11 @@ export const getRestaurants = async (req, res) => {
 export const getRestaurant = async (req, res) => {
     const { id } = req.params;
     try {
-        const restaurant = await Restaurants.findById(id);
+        const restaurant = await restaurants.find(id);
 
         res.status(200).json(restaurant);
     }
-    catch {
+    catch (error) {
         res.status(404).json({ message: error.message });
     }
 }
@@ -33,7 +34,7 @@ export const getRestaurant = async (req, res) => {
 export const addRestaurant = async (req, res) => {
     const restaurant = req.body;
 
-    const newRestaurant = new Restaurants({ ...restaurant, name: req.name});
+    const newRestaurant = new restaurants({ ...restaurant, name: req.name});
 
     try {
         await newRestaurant.save();

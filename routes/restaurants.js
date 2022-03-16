@@ -4,7 +4,7 @@ import { getRestaurants, getRestaurant, addRestaurant } from '../controllers/res
 const router = express.Router();
 
 router.get('/:id', getRestaurant);
-router.get('/', getRestaurants);
+router.get('/restaurants', getRestaurants);
 router.get('/', addRestaurant);
 
 export default router; 
