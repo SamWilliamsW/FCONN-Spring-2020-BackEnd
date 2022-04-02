@@ -5,7 +5,7 @@ import Blacklist from '../models/blacklist.js';
 import Reports from '../models/reports.js';
 
 const router = express.Router();
-
+//
 export const getPosts = async (req, res) => {
     const { page } = req.query;
     
