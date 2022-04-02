@@ -1,17 +1,26 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import restaurants from '../models/restaurants.js'
+import Restaurants from '../models/restaurants.js'
 
 const router = express.Router();
 
 //Not being used yet. 
 
 export const getRestaurants = async (req, res) => {    
+    const { page } = req.query;
+
     try {
+        const LIMIT = 8;
+        const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
-        const total = await restaurants.countDocuments({});
-        const restaurants = await restaurants.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
-
+        const total = await Restaurants.countDocuments({});
+        // Find all restaurants
+        const restaurants = await Restaurants.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex); 
+        // If no restaurants are found, give an array of ["No restaurants found"]
+        if (restaurants.length === 0) {
+            res.json({ data: ["No restaurants found"] });
+        } 
+        // Log the total number of restaurants
         res.json({ data: restaurants, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT)});
         // res.json({ data: restaurants});
     } catch (error) {    
@@ -22,7 +31,14 @@ export const getRestaurants = async (req, res) => {
 export const getRestaurant = async (req, res) => {
     const { id } = req.params;
     try {
-        const restaurant = await restaurants.find(id);
+        // Otherwise we find the restaurant with the given id
+        const restaurant = await Restaurants.findOne({ _id: id });
+
+        // If no restaurant is found, give an array of ["No restaurant found"]
+        if (!restaurant) {
+            res.json({ restaurant: ["No restaurant found"] });
+        }
+
 
         res.status(200).json(restaurant);
     }
@@ -31,6 +47,7 @@ export const getRestaurant = async (req, res) => {
     }
 }
 
+/**
 export const addRestaurant = async (req, res) => {
     const restaurant = req.body;
 
@@ -45,5 +62,6 @@ export const addRestaurant = async (req, res) => {
         res.status(409).json({ message: error.message });
     }
 }
+*/
 
 export default router;

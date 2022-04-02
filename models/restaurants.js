@@ -7,8 +7,9 @@ const restaurantSchema = mongoose.Schema({
     state: {type: String, required: true},
     zip: {type: Number, required: true},
     phone: {type: String, required: false}
-})
+},
+{ collection: 'restaurants'})
 
-var Restaurants = mongoose.model('Restaurant', restaurantSchema);
+var Restaurants = mongoose.model('restaurants', restaurantSchema);
 
 export default Restaurants;
