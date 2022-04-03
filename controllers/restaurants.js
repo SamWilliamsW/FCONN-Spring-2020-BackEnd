@@ -32,7 +32,7 @@ export const getRestaurant = async (req, res) => {
     const { id } = req.params;
     try {
         // Otherwise we find the restaurant with the given id
-        const restaurant = await Restaurants.findOne({ _id: id });
+        const restaurant = await Restaurants.findById(id);
 
         // If no restaurant is found, give an array of ["No restaurant found"]
         if (!restaurant) {
