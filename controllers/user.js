@@ -2,6 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import UserModal from '../models/user.js';
+import RestaurantsModel from '../models/restaurants.js';
+
 dotenv.config();
 const secret = process.env.JWT_KEY;
 
@@ -49,16 +51,24 @@ export const signin = async (req, res) => {
   };
 
   export const businesssignup = async (req, res) => {
-    const { email, password, businessName, businessAddress, businessDescription, businessPhoneNumber} = req.body;
+    const { email, password, businessName, businessAddress, businessCity, businessState, businessPhoneNumber, businessZip, businessDescription, businessHoursStart, businessHoursEnd, businessTags, businessDelivery, businessTakeout, businessDineIn, businessMenuLink, businessPhoto} = req.body;
     try {
       const knownUser = await UserModal.findOne({ email });
-  
+
       if (knownUser) return res.status(400).json({ message: "User already exists" });
-  
+
+      
+      // Remove spaces then split by ,
+      const businessHoursStartArray = businessHoursStart.replace(/\s/g, '').split(',');
+      const businessHoursEndArray = businessHoursEnd.replace(/\s/g, '').split(',');
+      
+
+      const tagsArray = businessTags.replace(/\s/g, '').split(',');
+
       const hashedPassword = await bcrypt.hash(password, 12);
   
-      const result = await UserModal.create({ email, password: hashedPassword, name: businessName, businessName: businessName, businessAddress: businessAddress, businessDescription: businessDescription, businessPhoneNumber: businessPhoneNumber, isAdmin: false});
-  
+      const result = await UserModal.create({ email, password: hashedPassword, name: businessName, isAdmin: false});
+      const restaurantresult = await RestaurantsModel.create({ name: businessName, address: businessAddress, city: businessCity, state: businessState, zip: businessZip, phone: businessPhoneNumber, description: businessDescription, businessHoursStart: businessHoursStartArray, businessHoursEnd: businessHoursEndArray, tags: tagsArray, delivery: businessDelivery, takeout: businessTakeout, dinein: businessDineIn, comments: [], menuLink: businessMenuLink, photo: businessPhoto});
       const token = jwt.sign( { email: result.email, id: result._id }, secret.toString(), { expiresIn: "1h" } );
   
       res.status(201).json({ result, token });
