@@ -17,6 +17,7 @@ const restaurantSchema = mongoose.Schema({
     comments: {type: Array, required: true},
     menuLink: {type: String, required: true},
     photo: {type: String, required: true},
+    approved: {type: Boolean, required: false},
 },
 { collection: 'restaurants'})
 
