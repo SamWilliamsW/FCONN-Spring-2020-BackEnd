@@ -35,6 +35,21 @@ export const signin = async (req, res) => {
       const knownUser = await UserModal.findOne({ email });
   
       if (knownUser) return res.status(400).json({ message: "User already exists" });
+      
+      // get password length
+      const passwordLength = password.length;
+
+      if (passwordLength < 8 || passwordLength > 25){
+        return res.status(400).json({ message: "Password must be between 8 and 25 characters" });
+      }
+
+      // Check if there is a number in the password
+      const hasNumber = /\d/;
+      if (!hasNumber.test(password)){
+        return res.status(400).json({ message: "Password must contain a number" });
+      }
+
+
   
       const hashedPassword = await bcrypt.hash(password, 12);
   
@@ -51,24 +66,41 @@ export const signin = async (req, res) => {
   };
 
   export const businesssignup = async (req, res) => {
-    const { email, password, businessName, businessAddress, businessCity, businessState, businessPhoneNumber, businessZip, businessDescription, businessHoursStart, businessHoursEnd, businessTags, businessDelivery, businessTakeout, businessDineIn, businessMenuLink, businessPhoto} = req.body;
+    const { email, password, businessName, businessAddress, businessCity, businessState, businessPhoneNumber, businessZip, businessDescription, businessHoursStartSun, businessHoursStartMon, businessHoursStartTue, businessHoursStartWed, businessHoursStartThu, businessHoursStartFri, businessHoursStartSat, businessHoursEndSun, businessHoursEndMon, businessHoursEndTue, businessHoursEndWed, businessHoursEndThu, businessHoursEndFri, businessHoursEndSat, businessTags, businessDelivery, businessTakeout, businessDineIn, businessMenuLink, businessPhoto} = req.body;
     try {
       const knownUser = await UserModal.findOne({ email });
 
       if (knownUser) return res.status(400).json({ message: "User already exists" });
 
+      // get password length
+      const passwordLength = password.length;
+
+      if (passwordLength < 8 || passwordLength > 25){
+        return res.status(400).json({ message: "Password must be between 8 and 25 characters" });
+      }
+
+      // Check if there is a number in the password
+      const hasNumber = /\d/;
+      if (!hasNumber.test(password)){
+        return res.status(400).json({ message: "Password must contain a number" });
+      }
+
+      const businessHoursStartArray = [businessHoursStartSun, businessHoursStartMon, businessHoursStartTue, businessHoursStartWed, businessHoursStartThu, businessHoursStartFri, businessHoursStartSat]
+      const businessHoursEndArray = [businessHoursEndSun, businessHoursEndMon, businessHoursEndTue, businessHoursEndWed, businessHoursEndThu, businessHoursEndFri, businessHoursEndSat]
       
       // Remove spaces then split by ,
-      const businessHoursStartArray = businessHoursStart.replace(/\s/g, '').split(',');
-      const businessHoursEndArray = businessHoursEnd.replace(/\s/g, '').split(',');
+      //const businessHoursStartArray = businessHoursStart.replace(/\s/g, '').split(',');
+      //const businessHoursEndArray = businessHoursEnd.replace(/\s/g, '').split(',');
       
 
       const tagsArray = businessTags.replace(/\s/g, '').split(',');
 
       const hashedPassword = await bcrypt.hash(password, 12);
+
+      const approved = false;
   
       const result = await UserModal.create({ email, password: hashedPassword, name: businessName, isAdmin: false});
-      const restaurantresult = await RestaurantsModel.create({ name: businessName, address: businessAddress, city: businessCity, state: businessState, zip: businessZip, phone: businessPhoneNumber, description: businessDescription, businessHoursStart: businessHoursStartArray, businessHoursEnd: businessHoursEndArray, tags: tagsArray, delivery: businessDelivery, takeout: businessTakeout, dinein: businessDineIn, comments: [], menuLink: businessMenuLink, photo: businessPhoto});
+      const restaurantresult = await RestaurantsModel.create({ name: businessName, address: businessAddress, city: businessCity, state: businessState, zip: businessZip, phone: businessPhoneNumber, description: businessDescription, businessHoursStart: businessHoursStartArray, businessHoursEnd: businessHoursEndArray, tags: tagsArray, delivery: businessDelivery, takeout: businessTakeout, dinein: businessDineIn, comments: [], menuLink: businessMenuLink, photo: businessPhoto, approved: approved, userId: result._id });
       const token = jwt.sign( { email: result.email, id: result._id }, secret.toString(), { expiresIn: "1h" } );
   
       res.status(201).json({ result, token });
