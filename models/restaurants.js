@@ -14,7 +14,7 @@ const restaurantSchema = mongoose.Schema({
     delivery: {type: Boolean, required: true},
     takeout: {type: Boolean, required: true},
     dinein: {type: Boolean, required: true},
-    comments: {type: Array, required: true},
+    messages: { type: [String], default: []},    
     menuLink: {type: String, required: true},
     photo: {type: String, required: true},
     approved: {type: Boolean, required: false},

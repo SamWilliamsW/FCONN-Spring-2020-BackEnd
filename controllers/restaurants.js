@@ -1,10 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Restaurants from '../models/restaurants.js'
+import Blacklist from '../models/blacklist.js';
+
 
 const router = express.Router();
 
-//Not being used yet. 
+// This event is fired.
 
 export const getRestaurants = async (req, res) => {    
     const { page } = req.query;
@@ -47,21 +49,78 @@ export const getRestaurant = async (req, res) => {
     }
 }
 
-/**
-export const addRestaurant = async (req, res) => {
-    const restaurant = req.body;
+// Everything message / bulletin board related vvvvv
 
-    const newRestaurant = new restaurants({ ...restaurant, name: req.name});
+// export const reportMessage = async (req, res) => {
+//     const { id } = req.params;
 
-    try {
-        await newRestaurant.save();
+//     if (!req.userId) {
+//         return res.json({ message: "Unauthenticated" });
+//       }
 
-        res.status(201).json(newRestaurant);
+//     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No Message with id: ${id}`); // Check if the id is valid.
+
+//     // Pull from the database the "reports" namespace, then get the "idList" array from it.
+//     const reports = await Reports.findOne({ namespace: "reports" }); // get the reports namespace
+//     const idList = reports.idList; // get the idList array from the database
+//     const nameList = reports.nameList; // get the nameList array from the database
+
+//     // Check if the message id is already in the "idList" array.
+
+//     const isMessageReported = idList.includes(String(id)); // Returns true if the post id is in the array.
+
+//     if (!isMessageReported) { // If the post id is not in the "idList" array, then add it.
+//         const reportedMessage = await restaurants.findById(id);
+
+//         // Append the restaurant id to the "idList" array as a string.
+//         idList.push(String(id));
+//         // Append the restaurant creator to the "nameList" array as a string.
+//         nameList.push(String(reportedRestaurant.title));
+
+//         // Update the "reports" namespace in the database.
+//         await Reports.findOneAndUpdate({ namespace: "reports" }, { idList, nameList}, { new: true });
+
+
+//         res.json({ message: "Restaurant reported successfully." });
+//     }
+// }
+
+export const messageBoard = async (req, res) => {
+    const { id } = req.params;
+    const { value } = req.body;
+
+    // Pull from the database the "blacklist" namespace, then get the "words" array from it.
+    const blacklist = await Blacklist.findOne({ namespace: "blacklist" });
+    const words = blacklist.words;
+    // Check if the content contains any of the words in the "words" array.
+    const containsBlacklistedWord = words.some((word) => value.includes(word));
+    if (containsBlacklistedWord) {
+        return res.status(403).json({ message: "Messages contains blacklisted word." });
+    }else {
+
+
+    const restaurant = await Restaurants.findById(id);
+
+    restaurant.messages.push(value);
+
+    const updatedMessage = await Restaurants.findByIdAndUpdate(id, restaurant, { new: true });
+
+    res.json(updatedMessage);
     }
-    catch (error) {
-        res.status(409).json({ message: error.message });
-    }
+};
+
+export const deleteMessage = async (req, res) => { 
+    const { id } = req.params;
+    const { messageIndex } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No message with id: ${id}`);
+
+    const restaurant = await Restaurants.findById(id);
+
+    restaurant.messages.pull(restaurant.messages[messageIndex]);
+    const updatedMesage = await Restaurants.findByIdAndUpdate(id, restaurant, { new: true });
+
+    res.json({ message: "Message deleted successfully." })
 }
-*/
 
 export default router;
