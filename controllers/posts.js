@@ -183,6 +183,8 @@ export const reportPost = async (req, res) => {
     }
 }
 
+// Coments on a post by id.
+// Appends the comment to the comments array of the post based on the id of the post.
 export const commentPost = async (req, res) => {
     const { id } = req.params;
     const { value } = req.body;
@@ -197,28 +199,30 @@ export const commentPost = async (req, res) => {
     }else {
 
 
-    const post = await PostMessage.findById(id);
+    const post = await PostMessage.findById(id); // Get the post based on the id.
 
-    post.comments.push(value);
+    post.comments.push(value); // Append the comment to the comments array of the post.
 
-    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true }); // Update the post in the database.
 
-    res.json(updatedPost);
+    res.json(updatedPost); // Return the updated post.
     }
 };
 
+// Deletes a comment from a post by id.
+// Removes the comment from the comments array of the post based on the id of the post.
 export const deleteCommentPost = async (req, res) => { 
     const { id } = req.params;
     const { commentIndex } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`); // Check if the id is valid.
 
-    const post = await PostMessage.findById(id);
+    const post = await PostMessage.findById(id); // Get the post based on the id.
 
-    post.comments.pull(post.comments[commentIndex]);
-    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+    post.comments.pull(post.comments[commentIndex]); // Remove the comment from the comments array of the post.
+    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true }); // Update the post in the database with the new comments array.
 
-    res.json({ message: "Comment deleted successfully." })
+    res.json({ message: "Comment deleted successfully." }) // Return a success message.
 }
 
 export default router;

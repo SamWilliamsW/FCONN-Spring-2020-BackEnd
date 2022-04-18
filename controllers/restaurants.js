@@ -6,13 +6,13 @@ import Blacklist from '../models/blacklist.js';
 
 const router = express.Router();
 
-// This event is fired.
 
+// Gets all the restaurants from the database and returns them
 export const getRestaurants = async (req, res) => {    
     const { page } = req.query;
 
     try {
-        const LIMIT = 8;
+        const LIMIT = 8; // number of restaurants per page
         const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
         const total = await Restaurants.countDocuments({});
