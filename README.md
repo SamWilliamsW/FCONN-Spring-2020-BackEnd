@@ -3,7 +3,7 @@
 * You will need access to the MongoDB database.
 * Reach out to me at marcusfranklinwallace@gmail.com in order to be added to the MongoDB Organization. 
 * I will then pass it on to whomever takes up the project and leave the database in your hands.
-* Link to Front End https://github.com/lucasdale99/FCONN
+* Link to Front End https://github.com/SamWilliamsW/FCONN-Spring-2022-Front-End
 
 # MongoDB Atlas Tutorial
 * https://www.youtube.com/watch?v=S4fi6Qux-4g
