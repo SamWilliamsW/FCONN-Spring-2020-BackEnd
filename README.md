@@ -1,7 +1,7 @@
 # FCONN_Backend
 * This is the Node, Express backend that connects to the MongoDB for the FCONN project.
 * You will need access to the MongoDB database.
-* Reach out to me at lucasdale99@gmail.com in order to be added to the MongoDB Organization. 
+* Reach out to me at marcusfranklinwallace@gmail.com in order to be added to the MongoDB Organization. 
 * I will then pass it on to whomever takes up the project and leave the database in your hands.
 * Link to Front End https://github.com/lucasdale99/FCONN
 
