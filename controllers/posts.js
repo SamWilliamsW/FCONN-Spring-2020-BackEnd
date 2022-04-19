@@ -14,7 +14,9 @@ export const getPosts = async (req, res) => {
         const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
     
         const total = await PostMessage.countDocuments({});
-        const posts = await PostMessage.find().sort({ _id_: -1 }).limit(LIMIT).skip(startIndex);  
+        //const posts = await PostMessage.find().sort({ _id_: -1 }).limit(LIMIT).skip(startIndex);  
+        // Do the line above where we get posts and sort them, but sort by date instead of id.
+        const posts = await PostMessage.find().sort({ createdAt: -1 }).limit(LIMIT).skip(startIndex); // Changed to sort by date created instead of id.
 
         res.json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT)});
     } catch (error) {    
